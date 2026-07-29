@@ -5,6 +5,7 @@ import com.micro.auth.enums.Role;
 import com.micro.auth.repository.UserRepository;
 import com.micro.category.entity.Category;
 import com.micro.category.repository.CategoryRepository;
+import com.micro.product.dto.ProductRequest;
 import com.micro.product.entity.Product;
 import com.micro.product.repository.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -14,13 +15,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 public class DataInitializer {
+    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
+    private ProductRepository productRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Bean
     public CommandLineRunner initAdmin(
@@ -29,53 +31,174 @@ public class DataInitializer {
             ProductRepository productRepository,
             PasswordEncoder passwordEncoder
     ) {
-        return args -> {
-            if (userRepository.findByEmail("admin@example.com").isEmpty()) {
-                User admin = User.builder()
-                        .firstName("Super")
-                        .lastName("Admin")
-                        .email("admin@example.com")
-                        .password(passwordEncoder.encode("Admin@123"))
-                        .role(Role.ADMIN)
-                        .timeZone("Asia/Kolkata")
-                        .verified(true)
-                        .createdAt(Instant.now())
-                        .build();
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
+        this.passwordEncoder = passwordEncoder;
 
-                userRepository.save(admin);
-                System.out.println("ADMIN created");
+        return args -> {
+            createUsers();
+            createCategories();
+            createProducts();
+        };
+    }
+
+    private void createUsers() {
+        createUserIfNotExists(
+                "admin@example.com",
+                "Super",
+                "Admin",
+                "Admin@123",
+                Role.ADMIN
+        );
+
+        createUserIfNotExists(
+                "user@example.com",
+                "Demo",
+                "User",
+                "Password123",
+                Role.USER
+        );
+    }
+
+    private void createUserIfNotExists(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            Role role
+    ) {
+        this.userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                            User user = User.builder()
+                                    .firstName(firstName)
+                                    .lastName(lastName)
+                                    .email(email)
+                                    .password(this.passwordEncoder.encode(password))
+                                    .role(role)
+                                    .timeZone("Asia/Kolkata")
+                                    .verified(true)
+                                    .createdAt(Instant.now())
+                                    .build();
+
+                            System.out.println(role + " created");
+                            return this.userRepository.save(user);
+                        }
+                );
+    }
+
+    private void createCategories() {
+        List<Category> categories = List.of(
+                Category.builder()
+                        .name("Tech")
+                        .description("Technology and electronic products")
+                        .build(),
+
+                Category.builder()
+                        .name("Accessories")
+                        .description("Daily use accessories and add-ons")
+                        .build(),
+
+                Category.builder()
+                        .name("Home")
+                        .description("Home and living products")
+                        .build(),
+
+                Category.builder()
+                        .name("Apparel")
+                        .description("Clothing and fashion products")
+                        .build()
+        );
+
+        List<Category> newCategories = categories.stream()
+                .filter(c -> !this.categoryRepository.existsByNameIgnoreCase(c.getName()))
+                .toList();
+
+        if (!newCategories.isEmpty()) {
+            this.categoryRepository.saveAll(newCategories);
+            System.out.println(newCategories.size() + " categories created");
+        }
+    }
+
+    private void createProducts() {
+        List<ProductRequest> products = List.of(
+                new ProductRequest(
+                        "Apex Wireless Noise-Cancelling Headphones",
+                        "Experience premium sound with industry-leading hybrid active noise cancelling technology.",
+                        1L,
+                        BigDecimal.valueOf(299),
+                        10
+                ),
+                new ProductRequest(
+                        "Titan Smartwatch Series 5",
+                        "Track your health, receive notifications, and enjoy a gorgeous 1.9-inch AMOLED display.",
+                        1L,
+                        BigDecimal.valueOf(199),
+                        10
+                ),
+                new ProductRequest(
+                        "AeroGrip Mechanical Gaming Keyboard",
+                        "Ultra-responsive brown switches with fully customizable dynamic RGB backlighting.",
+                        1L,
+                        BigDecimal.valueOf(129),
+                        10
+                ),
+                new ProductRequest(
+                        "Nomad Full-Grain Leather Travel Duffle",
+                        "Handcrafted travel duffle bag designed with durable waterproof zippers and dedicated shoe pocket.",
+                        2L,
+                        BigDecimal.valueOf(89),
+                        10
+                ),
+                new ProductRequest(
+                        "Vanguard Minimalist Carbon Fiber Wallet",
+                        "RFID-blocking slim cardholder that holds up to 12 cards without stretching out.",
+                        2L,
+                        BigDecimal.valueOf(45),
+                        10
+                ),
+                new ProductRequest(
+                        "OmniFit Ergonomic Breathable Office Chair",
+                        "Complete adjustable lumbo-sacral support system with high-density mesh and reclining locks.",
+                        3L,
+                        BigDecimal.valueOf(349),
+                        10
+                ),
+                new ProductRequest(
+                        "Prime Cotton Oversized Fit Tee",
+                        "Super soft 240GSM heavyweight cotton fabric with dropping shoulder silhouette.",
+                        4L,
+                        BigDecimal.valueOf(28),
+                        10
+                ),
+                new ProductRequest(
+                        "Aura Ceramic Essential Oil Diffuser",
+                        "Minimalist ceramic ultrasonic diffuser with ambient warm-light glow modes.",
+                        3L,
+                        BigDecimal.valueOf(38),
+                        10
+                )
+        );
+
+        products.forEach(productInfo -> {
+            if (this.productRepository.findByName(productInfo.name()).isPresent()) {
+                return;
             }
 
-            List<String> cNames = Arrays.asList("Electronics", "Fashions");
-            cNames.forEach(cName -> {
-                if (!categoryRepository.existsByNameIgnoreCase(cName)) {
-                    Category category = Category.builder()
-                            .name(cName)
-                            .description(cName + " description sample")
-                            .build();
-                    categoryRepository.save(category);
-                }
-            });
-            System.out.println("Categories created");
+            Category category = this.categoryRepository
+                    .findById(productInfo.categoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found : " + productInfo.categoryId()));
 
-            List<String> pNames = Arrays.asList("Wireless Mouse", "Shirt");
-            Random random = new Random();
-            int priceMin = 300, priceMax = 700;
-            int stockMin = 10, stockMax = 25;
-            AtomicInteger cId = new AtomicInteger(1);
-            pNames.forEach(pName -> {
-                if (productRepository.findByName(pName).isEmpty()) {
-                    Product product = Product.builder()
-                            .name(pName)
-                            .description(pName + " description sample")
-                            .category(categoryRepository.findById(Long.valueOf(cId.getAndIncrement())).get())
-                            .price(BigDecimal.valueOf(random.nextInt(priceMax - priceMin + 1) + priceMin))
-                            .stock(random.nextInt(stockMax - stockMin + 1) + stockMin)
-                            .build();
-                    productRepository.save(product);
-                }
-            });
-            System.out.println("Products created");
-        };
+            Product product = Product.builder()
+                    .name(productInfo.name())
+                    .description(productInfo.description())
+                    .category(category)
+                    .price(productInfo.price())
+                    .stock(productInfo.stock())
+                    .build();
+            productRepository.save(product);
+        });
+
+        System.out.println(products.size() + " Products created successfully");
     }
 }
