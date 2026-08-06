@@ -123,9 +123,9 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDIr
+            @RequestParam(defaultValue = "asc") String sortDir
     ) {
-        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDIr));
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir));
     }
 
     @Operation(
