@@ -32,7 +32,8 @@ public class CorsConfig {
         corsConfiguration.setAllowedOrigins(
                 List.of(
                         "http://localhost:5173",
-                        "https://ecommerce-ui-lac.vercel.app"
+                        "https://ecommerce-ui-lac.vercel.app",
+                        "https://localhost"
                 )
         );
 
