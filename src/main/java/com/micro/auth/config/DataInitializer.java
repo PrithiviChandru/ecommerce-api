@@ -38,8 +38,8 @@ public class DataInitializer {
 
         return args -> {
             createUsers();
-//            createCategories();
-//            createProducts();
+            createCategories();
+            createProducts();
         };
     }
 
