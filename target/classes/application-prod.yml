@@ -5,7 +5,7 @@ server:
 #Database Credentials
 spring:
   application:
-    name: authservice
+    name: ecommerce-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL:jdbc:mysql://btto0jkgdh3evw6bqwqy-mysql.services.clever-cloud.com:3306/btto0jkgdh3evw6bqwqy?useSSL=false&serverTimeZone=UTC}

@@ -5,10 +5,10 @@ server:
 #Database Credentials
 spring:
   application:
-    name: authservice
+    name: ecommerce-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL:jdbc:mysql://localhost:3306/auth_db}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ecommerce_db}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:1234}
   jpa:
