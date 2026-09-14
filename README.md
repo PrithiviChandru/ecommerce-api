@@ -1,4 +1,4 @@
-# E-Commerce Monolith
+# E-Commerce Monolithic
 
 A Spring Boot e-commerce application initially developed using a monolithic architecture.
 
