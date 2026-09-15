@@ -1,6 +1,7 @@
 package com.micro.order.controller;
 
 import com.micro.auth.dto.response.ApiResponse;
+import com.micro.auth.dto.response.PagedResponse;
 import com.micro.auth.schema.ErrorResponseSchema;
 import com.micro.order.dto.OrderRequest;
 import com.micro.order.dto.OrderResponse;
@@ -61,6 +62,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(
             @Valid @RequestBody OrderRequest request
     ) {
+        System.out.println("Reached controller");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -85,9 +87,14 @@ public class OrderController {
     })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> myOrders() {
+    public ResponseEntity<ApiResponse<PagedResponse<OrderResponse>>> myOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(orderService.myOrders(authentication));
+        return ResponseEntity.ok(orderService.myOrders(authentication, page, size, sortBy, sortDir));
     }
 
     @Operation(
@@ -109,8 +116,13 @@ public class OrderController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders() {
-        return ResponseEntity.ok(orderService.getOrders());
+    public ResponseEntity<ApiResponse<PagedResponse<OrderResponse>>> getOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        return ResponseEntity.ok(orderService.getOrders(page, size, sortBy, sortDir));
     }
 
     @Operation(
@@ -167,7 +179,7 @@ public class OrderController {
             ),
     })
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(
             @Parameter(
                     description = "Order ID",

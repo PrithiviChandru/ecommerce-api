@@ -54,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment payment = Payment.builder()
                 .order(order)
-                .amount(order.getTotalAmount())
+//                .amount(order.getTotalAmount())
                 .paymentMethod(request.paymentMethod())
                 .status(PaymentStatus.SUCCESS)
                 .transactionId(transactionId)

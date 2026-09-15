@@ -1,6 +1,6 @@
 #Server Port
 server:
-  port: ${PORT:8081}
+  port: 8081
 
 #Database Credentials
 spring:
@@ -8,9 +8,9 @@ spring:
     name: ecommerce-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL:jdbc:mysql://localhost:3306/ecommerce_db}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:1234}
+    url: jdbc:mysql://localhost:3306/ecommerce_db
+    username: root
+    password: 1234
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
@@ -19,5 +19,5 @@ spring:
 
 #Token Properties
 jwt:
-  secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ}
-  expiration: ${JWT_EXPIRATION:1800000}
+  secret: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  expiration: 1800000
