@@ -14,10 +14,14 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
 
 #Token Properties
 jwt:
   secret: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
   expiration: 1800000
+
+razorpay:
+  key-id: rzp_test_Td1F9V8Gt9r7pO
+  key-secret: Or4Ks6j1WpKg7p5j1sUFcGmX

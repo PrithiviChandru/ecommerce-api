@@ -19,6 +19,7 @@ public class PaymentResponse {
     private PaymentStatus paymentStatus;
     private String transactionId;
     private OrderStatus orderStatus;
+    private String razorpayOrderId;
     private Instant createdAt;
     private Instant updatedAt;
 }

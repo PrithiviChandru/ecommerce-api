@@ -62,7 +62,6 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(
             @Valid @RequestBody OrderRequest request
     ) {
-        System.out.println("Reached controller");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity
                 .status(HttpStatus.CREATED)

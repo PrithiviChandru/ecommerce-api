@@ -39,8 +39,11 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String transactionId;
+
+    @Column(unique = true)
+    private String razorpayOrderId;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -3,6 +3,7 @@ package com.micro.order.service.impl;
 import com.micro.auth.dto.response.ApiResponse;
 import com.micro.auth.dto.response.PagedResponse;
 import com.micro.auth.entity.User;
+import com.micro.auth.enums.Role;
 import com.micro.auth.exception.ApiException;
 import com.micro.order.dto.OrderItemRequest;
 import com.micro.order.dto.OrderItemResponse;
@@ -67,27 +68,7 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItems(orderItems);
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
-
-        List<OrderItemResponse> itemResponses = savedOrder.getOrderItems().stream()
-                .map(i -> {
-                    return OrderItemResponse.builder()
-                            .productId(i.getProduct().getId())
-                            .productName(i.getProduct().getName())
-                            .quantity(i.getQuantity())
-                            .price(i.getPrice())
-                            .subTotal(i.getSubTotal())
-                            .build();
-                }).collect(Collectors.toUnmodifiableList());
-
-        OrderResponse response = OrderResponse.builder()
-                .id(savedOrder.getId())
-                .userId(savedOrder.getUser().getId())
-                .userName(savedOrder.getUser().getFirstName())
-                .items(itemResponses)
-                .totalAmount(savedOrder.getTotalAmount())
-                .status(savedOrder.getStatus())
-                .createdAt(savedOrder.getCreatedAt())
-                .build();
+        OrderResponse response = mapToOrderResponse(savedOrder);
 
         return ApiResponse.success(
                 "Order created successfully",
@@ -165,21 +146,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public ApiResponse<OrderResponse> cancelOrder(Authentication authentication, Long id) {
         User currentUser = (User) authentication.getPrincipal();
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> ApiException.notFound("Order not found"));
 
-        boolean isAdmin = currentUser.getRole().name().equals("ADMIN");
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
         if (!isAdmin && !order.getUser().getId().equals(currentUser.getId()))
             throw ApiException.badRequest("You are not allowed to cancel this order");
 
-        if (!order.getStatus().equals(OrderStatus.CREATED))
+        if (OrderStatus.CREATED != order.getStatus())
             throw ApiException.badRequest("Only created orders can be cancelled");
 
         for (OrderItem item : order.getOrderItems()) {
-            Product product = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> ApiException.notFound("Product not found for id: " + item.getProduct().getId()));
+            Product product = item.getProduct();
             product.setStock(product.getStock() + item.getQuantity());
         }
 
@@ -192,93 +173,6 @@ public class OrderServiceImpl implements OrderService {
                 response
         );
     }
-
-//    @Override
-//    public ApiResponse<List<OrderResponse>> myOrders(Authentication authentication) {
-//        User user = (User) authentication.getPrincipal();
-//        List<Order> orders = orderRepository.findByUserId(user.getId());
-//        List<OrderResponse> responses = orders.stream()
-//                .map(order -> mapToOrderResponse(order))
-//                .collect(Collectors.toUnmodifiableList());
-//
-//        return ApiResponse.success(
-//                "Orders fetched successfully",
-//                responses
-//        );
-//    }
-//
-//    @Override
-//    public ApiResponse<List<OrderResponse>> getOrders() {
-//        List<OrderResponse> responses = orderRepository.findAll().stream()
-//                .map(order -> mapToOrderResponse(order))
-//                .collect(Collectors.toUnmodifiableList());
-//
-//        return ApiResponse.success(
-//                "Orders fetched successfully",
-//                responses
-//        );
-//    }
-//
-//    @Override
-//    public ApiResponse<OrderResponse> getOrder(Long id) {
-//        Order order = orderRepository.findById(id)
-//                .orElseThrow(() -> ApiException.notFound("Order not found"));
-//        OrderResponse response = mapToOrderResponse(order);
-//
-//        return ApiResponse.success(
-//                "Order fetched successfully",
-//                response
-//        );
-//    }
-//
-//    @Override
-//    @Transactional
-//    public ApiResponse<OrderResponse> cancelOrder(Authentication authentication, Long id) {
-//        User user = (User) authentication.getPrincipal();
-//        Order order = orderRepository.findById(id)
-//                .orElseThrow(() -> ApiException.notFound("Order not found"));
-//
-//        // USER can cancel only own orders
-//        boolean isAdmin = user.getRole().name().equals("ADMIN");
-//        if (!isAdmin && !order.getUser().getId().equals(user.getId()))
-//            throw ApiException.badRequest("You are not allowed to cancel this order");
-//
-//        // only CREATED orders can be cancelled
-//        if (order.getStatus() != OrderStatus.CREATED)
-//            throw ApiException.badRequest("Only created orders can be cancelled");
-//
-//        // update status
-//        order.setStatus(OrderStatus.CANCELLED);
-//        // restore stock
-//        Product product = order.getProduct();
-//        product.setStock(product.getStock() + order.getQuantity());
-//
-//        productRepository.save(product);
-//        Order updatedOrder = orderRepository.save(order);
-//        OrderResponse response = mapToOrderResponse(updatedOrder);
-//
-//        return ApiResponse.success(
-//                "Order cancelled successfully",
-//                response
-//        );
-//    }
-//
-//    private OrderResponse mapToOrderResponse(Order order) {
-//        User user = order.getUser();
-//        Product product = order.getProduct();
-//        return OrderResponse.builder()
-//                .orderId(order.getId())
-//                .userId(user.getId())
-//                .userName(user.getFirstName() + " " + user.getLastName())
-//                .productId(product.getId())
-//                .productName(product.getName())
-//                .quantity(order.getQuantity())
-//                .price(order.getPrice())
-//                .totalAmount(order.getTotalAmount())
-//                .status(order.getStatus())
-//                .createdAt(order.getCreatedAt())
-//                .build();
-//    }
 
     private OrderResponse mapToOrderResponse(Order order) {
         return OrderResponse.builder()

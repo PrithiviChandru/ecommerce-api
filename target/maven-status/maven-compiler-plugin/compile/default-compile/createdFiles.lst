@@ -1,7 +1,7 @@
 com\micro\auth\schema\LoginResponseSchema.class
 com\micro\category\controller\CategoryController.class
+com\micro\auth\config\SecurityConfig.class
 com\micro\auth\schema\user\UserDetailsSchema.class
-com\micro\auth\security\SecurityConfig.class
 com\micro\auth\dto\response\auth\ResetPasswordResponse.class
 com\micro\auth\dto\response\auth\TokenValidationResponse.class
 com\micro\order\dto\OrderResponse$OrderResponseBuilder.class
@@ -12,6 +12,7 @@ com\micro\payment\enums\PaymentMethod.class
 com\micro\auth\dto\UserResponse$UserResponseBuilder.class
 com\micro\auth\dto\request\auth\VerifyEmailRequest.class
 com\micro\auth\dto\request\auth\UpdateProfileRequest.class
+com\micro\payment\dto\PaymentVerifyRequest.class
 com\micro\product\controller\ProductController.class
 com\micro\product\dto\ProductRequest.class
 com\micro\auth\exception\GlobalExceptionHandler.class
@@ -64,6 +65,7 @@ com\micro\auth\dto\request\auth\TokenValidationRequest.class
 com\micro\auth\dto\response\auth\RegisterResponse.class
 com\micro\order\repository\OrderRepository.class
 com\micro\payment\dto\PaymentResponse$PaymentResponseBuilder.class
+com\micro\payment\config\RazorpayConfig.class
 com\micro\order\entity\Order.class
 com\micro\auth\schema\user\DeleteResponseSchema.class
 com\micro\order\entity\OrderItem$OrderItemBuilder.class
