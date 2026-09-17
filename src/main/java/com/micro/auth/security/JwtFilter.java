@@ -63,7 +63,13 @@ public class JwtFilter extends OncePerRequestFilter {
             String accessToken = authHeader.substring(7);
             if (tokenBlackListService.isBlacklisted(accessToken)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired token");
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                            "apiStatus": false,
+                            "message": "Invalid or expired token"
+                        }
+                        """);
                 return;
             }
 
@@ -78,7 +84,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             } catch (Exception ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write(ex.getMessage());
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                            "apiStatus": false,
+                            "message": "%s"
+                        }
+                        """.formatted(ex.getMessage())
+                );
             }
         }
     }

@@ -47,7 +47,6 @@ D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\aut
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\schema\user\UserDetailsListSchema.java
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\schema\user\UserDetailsSchema.java
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\schema\VerifyEmailResponseSchema.java
-D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\security\CustomUserDetails.java
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\security\JwtFilter.java
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\security\JwtService.java
 D:\java\ecommerce\ecommerce-monolithic\ecommerce-api\src\main\java\com\micro\auth\security\TokenBlackListService.java
