@@ -14,7 +14,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: false
 
 #Token Properties
@@ -23,5 +23,5 @@ jwt:
   expiration: 1800000
 
 razorpay:
-  key-id: rzp_test_Td1F9V8Gt9r7pO
-  key-secret: Or4Ks6j1WpKg7p5j1sUFcGmX
+  key-id: rzp_test_TdNWU37S2ChC6s
+  key-secret: xfcEQaX87hwMZhnceSa4Mc4G

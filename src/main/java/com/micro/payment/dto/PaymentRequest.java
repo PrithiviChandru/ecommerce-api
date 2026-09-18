@@ -11,7 +11,7 @@ public record PaymentRequest(
         Long orderId,
 
         @NotNull(message = "Payment method is required")
-        @Schema(name = "paymentMethod", example = "UPI", allowableValues = {"UPI", "CARD", "NET_BANKING"})
+        @Schema(name = "paymentMethod", example = "CARD", allowableValues = {"CARD", "NET_BANKING", "UPI"})
         PaymentMethod paymentMethod
 ) {
 }
