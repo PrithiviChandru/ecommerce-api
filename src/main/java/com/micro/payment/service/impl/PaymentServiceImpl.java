@@ -41,6 +41,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
     private final RazorpayClient razorpayClient;
 
+    @Value("${razorpay.key-id}")
+    private String razorpayKeyId;
+
     @Value("${razorpay.key-secret}")
     private String razorpayKeySecret;
 
@@ -98,6 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentStatus(savedPayment.getStatus())
 //                .transactionId(savedPayment.getTransactionId())
                 .razorpayOrderId(savedPayment.getRazorpayOrderId())
+                .razorpayKeyId(razorpayKeyId)
                 .orderStatus(savedPayment.getOrder().getStatus())
                 .createdAt(savedPayment.getCreatedAt())
                 .updatedAt(savedPayment.getUpdatedAt())
