@@ -21,3 +21,8 @@ spring:
 jwt:
   secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ}
   expiration: ${JWT_EXPIRATION:1800000}
+
+#Razorpay Properties
+razorpay:
+  key-id: rzp_test_TdNWU37S2ChC6s
+  key-secret: xfcEQaX87hwMZhnceSa4Mc4G

@@ -3,6 +3,7 @@ package com.micro.auth.controller;
 import com.micro.auth.dto.UserResponse;
 import com.micro.auth.dto.request.auth.UpdateProfileRequest;
 import com.micro.auth.dto.response.ApiResponse;
+import com.micro.auth.dto.response.PagedResponse;
 import com.micro.auth.dto.response.user.DeleteResponse;
 import com.micro.auth.schema.ErrorResponseSchema;
 import com.micro.auth.schema.user.DeleteResponseSchema;
@@ -21,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "User APIs",
@@ -121,8 +120,13 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<ApiResponse<PagedResponse<UserResponse>>> getAllUsers(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "5") int size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir
+    ) {
+        return ResponseEntity.ok(userService.getAllUsers(page, size, sortBy, sortDir));
     }
 
     @Operation(

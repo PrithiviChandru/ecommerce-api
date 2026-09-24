@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ApiResponse<VerifyEmailResponse> verifyEmail(VerifyEmailRequest request) {
         User user = userRepository.findByVerificationToken(request.verifyToken())
-                .orElseThrow(() -> ApiException.notFound("Invalid token"));
+                .orElseThrow(() -> ApiException.notFound("Invalid varification token"));
 
         if (user.isVerified())
             throw ApiException.badRequest("Email already verified");

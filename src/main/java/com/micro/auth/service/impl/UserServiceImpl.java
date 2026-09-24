@@ -3,6 +3,7 @@ package com.micro.auth.service.impl;
 import com.micro.auth.dto.UserResponse;
 import com.micro.auth.dto.request.auth.UpdateProfileRequest;
 import com.micro.auth.dto.response.ApiResponse;
+import com.micro.auth.dto.response.PagedResponse;
 import com.micro.auth.dto.response.user.DeleteResponse;
 import com.micro.auth.entity.User;
 import com.micro.auth.exception.ApiException;
@@ -10,6 +11,10 @@ import com.micro.auth.repository.UserRepository;
 import com.micro.auth.security.JwtService;
 import com.micro.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,10 +57,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<List<UserResponse>> getAllUsers() {
-        List<User> userList = userRepository.findAll();
-        List<UserResponse> userInfoList = userList.stream().map(user -> mapToUserDetails(user)).collect(Collectors.toUnmodifiableList());
-        return ApiResponse.success("User list fetched", userInfoList);
+    public ApiResponse<PagedResponse<UserResponse>> getAllUsers(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<User> pagedUsers = userRepository.findAll(pageable);
+
+        List<UserResponse> userInfos = pagedUsers.getContent().stream()
+                .map(this::mapToUserDetails)
+                .collect(Collectors.toUnmodifiableList());
+        PagedResponse response = PagedResponse.<UserResponse>builder()
+                .content(userInfos)
+                .page(pagedUsers.getNumber())
+                .size(pagedUsers.getSize())
+                .totalElements(pagedUsers.getTotalElements())
+                .totalPages(pagedUsers.getTotalPages())
+                .last(pagedUsers.isLast())
+                .build();
+
+        return ApiResponse.success(
+                "User list fetched",
+                response
+        );
     }
 
     @Override
