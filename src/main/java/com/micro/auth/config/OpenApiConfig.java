@@ -18,11 +18,11 @@ public class OpenApiConfig {
                 // Information Details
                 .info(new Info()
                         .title("Ecommerce Service API")
-                        .version("1.2.0")
+                        .version("1.3.0")
                         .description("Ecommerce service APIs")
                         .contact(new Contact()
                                 .name("pruthvi")
-                                .email("pruthiviraj.c@gmail.com")
+                                .email("pruthivirajc.dev@gmail.com")
                         )
                 )
                 // Authorization details
